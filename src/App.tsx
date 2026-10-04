@@ -142,7 +142,7 @@ export default function App() {
     answers: userProgressAnswers,
     stats: userProgressStats,
     recordAnswer: handleRecordAnswer,
-    resetProgress: handleResetProgress,
+    //resetProgress: handleResetProgress,
   } = useUserProgress(dataPackage, selectedJobField);
 
   // Sync to local storage safely
