@@ -26,18 +26,17 @@ import { generate500GeneralQuestions, generate200TechnicalQuestionsForField } fr
 import { useUserProgress } from './hooks/useUserProgress';
 
 const STORAGE_KEY = 'pro_asn_bank_soal_v1';
-const JOB_FIELD_KEY = 'pro_asn_selected_job_field';
-const OWNER_MODE_KEY = 'pro_asn_is_owner_mode';
-
-function normalizeDataPackage(pkg: unknown): ProAsnDataPackage {
-  const p = (pkg && typeof pkg === 'object' ? pkg : {}) as Partial<ProAsnDataPackage>;
-
-  const rawGeneral = Array.isArray(p.general_questions) && p.general_questions.length >= 500
-    ? p.general_questions
-    : generate500GeneralQuestions(Array.isArray(p.general_questions) ? p.general_questions : initialProAsnData.general_questions);
-
-  const rawTech = Array.isArray(p.technical_questions) ? p.technical_questions : initialProAsnData.technical_questions;
-  const technical_questions = rawTech.length < 200
+const [dataPackage, setDataPackage] = useState<ProAsnDataPackage>(() => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      return normalizeDataPackage(JSON.parse(saved));
+    }
+  } catch (e) {
+    console.error("Storage error ignored", e);
+  }
+  return initialProAsnData;
+});
     ? [
         ...generate200TechnicalQuestionsForField('auditor', rawTech),
         ...generate200TechnicalQuestionsForField('sosial', rawTech),
